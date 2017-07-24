@@ -157,12 +157,12 @@ bool ScopeSim::Goto(double ra, double dec)
         // Try some simple rotations using the stored observatory position if any
         bool HavePosition = false;
         ln_lnlat_posn Position;
-        if ((nullptr != IUFindNumber(&LocationNP, "LAT")) && (0 != IUFindNumber(&LocationNP, "LAT")->value) &&
-            (nullptr != IUFindNumber(&LocationNP, "LONG")) && (0 != IUFindNumber(&LocationNP, "LONG")->value))
+        if ((nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value) &&
+            (nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value))
         {
             // I assume that being on the equator and exactly on the prime meridian is unlikely
-            Position.lat = IUFindNumber(&LocationNP, "LAT")->value;
-            Position.lng = IUFindNumber(&LocationNP, "LONG")->value;
+            Position.lat = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
+            Position.lng = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value;
             HavePosition = true;
         }
         struct ln_equ_posn EquatorialCoordinates;
@@ -369,12 +369,12 @@ bool ScopeSim::ReadScopeStatus()
 
         bool HavePosition = false;
         ln_lnlat_posn Position;
-        if ((nullptr != IUFindNumber(&LocationNP, "LAT")) && (0 != IUFindNumber(&LocationNP, "LAT")->value) &&
-            (nullptr != IUFindNumber(&LocationNP, "LONG")) && (0 != IUFindNumber(&LocationNP, "LONG")->value))
+        if ((nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value) &&
+            (nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value))
         {
             // I assume that being on the equator and exactly on the prime meridian is unlikely
-            Position.lat = IUFindNumber(&LocationNP, "LAT")->value;
-            Position.lng = IUFindNumber(&LocationNP, "LONG")->value;
+            Position.lat = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
+            Position.lng = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value;
             HavePosition = true;
         }
         struct ln_equ_posn EquatorialCoordinates;
@@ -709,12 +709,12 @@ void ScopeSim::TimerHit()
                 // Try a conversion with the stored observatory position if any
                 bool HavePosition = false;
                 ln_lnlat_posn Position;
-                if ((nullptr != IUFindNumber(&LocationNP, "LAT")) && (0 != IUFindNumber(&LocationNP, "LAT")->value) &&
-                    (nullptr != IUFindNumber(&LocationNP, "LONG")) && (0 != IUFindNumber(&LocationNP, "LONG")->value))
+                if ((nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value) &&
+                    (nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value))
                 {
                     // I assume that being on the equator and exactly on the prime meridian is unlikely
-                    Position.lat = IUFindNumber(&LocationNP, "LAT")->value;
-                    Position.lng = IUFindNumber(&LocationNP, "LONG")->value;
+                    Position.lat = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
+                    Position.lng = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value;
                     HavePosition = true;
                 }
                 struct ln_equ_posn EquatorialCoordinates;

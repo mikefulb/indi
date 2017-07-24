@@ -45,10 +45,10 @@ bool INDI::GPS::initProperties()
     IUFillSwitchVector(&RefreshSP, RefreshS, 1, getDeviceName(), "GPS_REFRESH", "Refresh", MAIN_CONTROL_TAB, IP_RW,
                        ISR_ATMOST1, 0, IPS_IDLE);
 
-    IUFillNumber(&LocationN[LOCATION_LATITUDE], "LAT", "Lat (dd:mm:ss)", "%010.6m", -90, 90, 0, 0.0);
-    IUFillNumber(&LocationN[LOCATION_LONGITUDE], "LONG", "Lon (dd:mm:ss)", "%010.6m", 0, 360, 0, 0.0);
-    IUFillNumber(&LocationN[LOCATION_ELEVATION], "ELEV", "Elevation (m)", "%g", -200, 10000, 0, 0);
-    IUFillNumberVector(&LocationNP, LocationN, 3, getDeviceName(), "GEOGRAPHIC_COORD", "Location", MAIN_CONTROL_TAB,
+    IUFillNumber(&LocationN[LOCATION_LATITUDE], INDI::SP::GEOGRAPHIC_COORD_LAT, "Lat (dd:mm:ss)", "%010.6m", -90, 90, 0, 0.0);
+    IUFillNumber(&LocationN[LOCATION_LONGITUDE], INDI::SP::GEOGRAPHIC_COORD_LONG, "Lon (dd:mm:ss)", "%010.6m", 0, 360, 0, 0.0);
+    IUFillNumber(&LocationN[LOCATION_ELEVATION], INDI::SP::GEOGRAPHIC_COORD_ELEV, "Elevation (m)", "%g", -200, 10000, 0, 0);
+    IUFillNumberVector(&LocationNP, LocationN, 3, getDeviceName(), INDI::SP::GEOGRAPHIC_COORD, "Location", MAIN_CONTROL_TAB,
                        IP_RO, 60, IPS_OK);
 
     IUFillText(&TimeT[0], "UTC", "UTC Time", nullptr);

@@ -67,7 +67,7 @@ void SkySafariClient::newProperty(INDI::Property *property)
         mountParkSP = property->getSwitch();
     else if (!strcmp(property->getName(), "EQUATORIAL_EOD_COORD"))
         eqCoordsNP = property->getNumber();
-    else if (!strcmp(property->getName(), "GEOGRAPHIC_COORD"))
+    else if (!strcmp(property->getName(), INDI::SP::GEOGRAPHIC_COORD))
         geoCoordsNP = property->getNumber();
     else if (!strcmp(property->getName(), "ON_COORD_SET"))
         gotoModeSP = property->getSwitch();

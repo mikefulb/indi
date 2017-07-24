@@ -141,7 +141,7 @@ int IndiDevice::init_properties()
     //IDLog("IndiDevice::init_properties()  MyDev=%s\n",deviceName());
     IUFillSwitch(&ConnectionS[0], "CONNECT", "Connect", ISS_OFF);
     IUFillSwitch(&ConnectionS[1], "DISCONNECT", "Disconnect", ISS_ON);
-    IUFillSwitchVector(&ConnectionSV, ConnectionS, 2, deviceName(), "CONNECTION", "Connection", "Main Control", IP_RW,
+    IUFillSwitchVector(&ConnectionSV, ConnectionS, 2, deviceName(), INDI::SP::CONNECTION, "Connection", "Main Control", IP_RW,
                        ISR_1OFMANY, 60, IPS_IDLE);
 
     return 0;

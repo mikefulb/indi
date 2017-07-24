@@ -197,12 +197,12 @@ bool SkywatcherAPIMount::Goto(double ra, double dec)
         // Try a conversion with the stored observatory position if any
         bool HavePosition = false;
         ln_lnlat_posn Position;
-        if ((nullptr != IUFindNumber(&LocationNP, "LAT")) && (0 != IUFindNumber(&LocationNP, "LAT")->value) &&
-            (nullptr != IUFindNumber(&LocationNP, "LONG")) && (0 != IUFindNumber(&LocationNP, "LONG")->value))
+        if ((nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value) &&
+            (nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value))
         {
             // I assume that being on the equator and exactly on the prime meridian is unlikely
-            Position.lat = IUFindNumber(&LocationNP, "LAT")->value;
-            Position.lng = IUFindNumber(&LocationNP, "LONG")->value;
+            Position.lat = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
+            Position.lng = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value;
             HavePosition = true;
         }
         struct ln_equ_posn EquatorialCoordinates;
@@ -248,8 +248,8 @@ bool SkywatcherAPIMount::Goto(double ra, double dec)
     {
         // The initial position of the Virtuoso mount is polar aligned when switched on.
         // The altitude is corrected by the latitude.
-        if (IUFindNumber(&LocationNP, "LAT"))
-            AltAz.alt = AltAz.alt - IUFindNumber(&LocationNP, "LAT")->value;
+        if (IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT))
+            AltAz.alt = AltAz.alt - IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
 
         AltAz.az = 180 + AltAz.az;
     }
@@ -827,8 +827,8 @@ bool SkywatcherAPIMount::ReadScopeStatus()
 
         // The initial position of the Virtuoso mount is polar aligned when switched on.
         // The altitude is corrected by the latitude.
-        if (IUFindNumber(&LocationNP, "LAT"))
-            MountDegree += IUFindNumber(&LocationNP, "LAT")->value;
+        if (IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT))
+            MountDegree += IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
 
         // The altitude degrees in the Virtuoso Alt-Az mount are inverted.
         AltAz.alt = 3420 - MountDegree;
@@ -860,12 +860,12 @@ bool SkywatcherAPIMount::ReadScopeStatus()
     {
         bool HavePosition = false;
         ln_lnlat_posn Position;
-        if ((nullptr != IUFindNumber(&LocationNP, "LAT")) && (0 != IUFindNumber(&LocationNP, "LAT")->value) &&
-            (nullptr != IUFindNumber(&LocationNP, "LONG")) && (0 != IUFindNumber(&LocationNP, "LONG")->value))
+        if ((nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value) &&
+            (nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value))
         {
             // I assume that being on the equator and exactly on the prime meridian is unlikely
-            Position.lat = IUFindNumber(&LocationNP, "LAT")->value;
-            Position.lng = IUFindNumber(&LocationNP, "LONG")->value;
+            Position.lat = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
+            Position.lng = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value;
             HavePosition = true;
         }
         struct ln_equ_posn EquatorialCoordinates;
@@ -946,8 +946,8 @@ bool SkywatcherAPIMount::Sync(double ra, double dec)
 
         // The initial position of the Virtuoso mount is polar aligned when switched on.
         // The altitude is corrected by the latitude.
-        if (IUFindNumber(&LocationNP, "LAT"))
-            MountDegree += IUFindNumber(&LocationNP, "LAT")->value;
+        if (IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT))
+            MountDegree += IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
 
         // The altitude degrees in the Virtuoso Alt-Az mount are inverted.
         AltAz.alt = 3420 - MountDegree;
@@ -1069,12 +1069,12 @@ void SkywatcherAPIMount::TimerHit()
                 // Try a conversion with the stored observatory position if any
                 bool HavePosition = false;
                 ln_lnlat_posn Position;
-                if ((nullptr != IUFindNumber(&LocationNP, "LAT")) && (0 != IUFindNumber(&LocationNP, "LAT")->value) &&
-                    (nullptr != IUFindNumber(&LocationNP, "LONG")) && (0 != IUFindNumber(&LocationNP, "LONG")->value))
+                if ((nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value) &&
+                    (nullptr != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)) && (0 != IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value))
                 {
                     // I assume that being on the equator and exactly on the prime meridian is unlikely
-                    Position.lat = IUFindNumber(&LocationNP, "LAT")->value;
-                    Position.lng = IUFindNumber(&LocationNP, "LONG")->value;
+                    Position.lat = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
+                    Position.lng = IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LONG)->value;
                     HavePosition = true;
                 }
                 struct ln_equ_posn EquatorialCoordinates;
@@ -1099,9 +1099,9 @@ void SkywatcherAPIMount::TimerHit()
             {
                 // The initial position of the Virtuoso mount is polar aligned when switched on.
                 // The altitude is corrected by the latitude.
-                if (IUFindNumber(&LocationNP, "LAT"))
+                if (IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT))
                 {
-                    AltAz.alt = AltAz.alt - IUFindNumber(&LocationNP, "LAT")->value;
+                    AltAz.alt = AltAz.alt - IUFindNumber(&LocationNP, INDI::SP::GEOGRAPHIC_COORD_LAT)->value;
                 }
                 // Drift compensation for tracking mode (SoftPEC)
                 if (IUFindSwitch(&SoftPECModesSP, "SOFTPEC_ENABLED") &&

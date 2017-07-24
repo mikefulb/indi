@@ -73,10 +73,10 @@ bool INDI::Weather::initProperties()
                       IPS_IDLE);
 
     // Location
-    IUFillNumber(&LocationN[LOCATION_LATITUDE], "LAT", "Lat (dd:mm:ss)", "%010.6m", -90, 90, 0, 0.0);
-    IUFillNumber(&LocationN[LOCATION_LONGITUDE], "LONG", "Lon (dd:mm:ss)", "%010.6m", 0, 360, 0, 0.0);
-    IUFillNumber(&LocationN[LOCATION_ELEVATION], "ELEV", "Elevation (m)", "%g", -200, 10000, 0, 0);
-    IUFillNumberVector(&LocationNP, LocationN, 3, getDeviceName(), "GEOGRAPHIC_COORD", "Location", SITE_TAB, IP_RW, 60,
+    IUFillNumber(&LocationN[LOCATION_LATITUDE], INDI::SP::GEOGRAPHIC_COORD_LAT, "Lat (dd:mm:ss)", "%010.6m", -90, 90, 0, 0.0);
+    IUFillNumber(&LocationN[LOCATION_LONGITUDE], INDI::SP::GEOGRAPHIC_COORD_LONG, "Lon (dd:mm:ss)", "%010.6m", 0, 360, 0, 0.0);
+    IUFillNumber(&LocationN[LOCATION_ELEVATION], INDI::SP::GEOGRAPHIC_COORD_ELEV, "Elevation (m)", "%g", -200, 10000, 0, 0);
+    IUFillNumberVector(&LocationNP, LocationN, 3, getDeviceName(), INDI::SP::GEOGRAPHIC_COORD, "Location", SITE_TAB, IP_RW, 60,
                        IPS_OK);
 
     // Update Period
@@ -89,7 +89,7 @@ bool INDI::Weather::initProperties()
     IUFillTextVector(&ActiveDeviceTP, ActiveDeviceT, 1, getDeviceName(), "ACTIVE_DEVICES", "Snoop devices", OPTIONS_TAB,
                      IP_RW, 60, IPS_IDLE);
 
-    IDSnoopDevice(ActiveDeviceT[0].text, "GEOGRAPHIC_COORD");
+    IDSnoopDevice(ActiveDeviceT[0].text, INDI::SP::GEOGRAPHIC_COORD);
 
     if (weatherConnection & CONNECTION_SERIAL)
     {
@@ -186,11 +186,11 @@ bool INDI::Weather::ISNewNumber(const char *dev, const char *name, double values
     //  first check if it's for our device
     if (strcmp(dev, getDeviceName()) == 0)
     {
-        if (strcmp(name, "GEOGRAPHIC_COORD") == 0)
+        if (strcmp(name, INDI::SP::GEOGRAPHIC_COORD) == 0)
         {
-            int latindex       = IUFindIndex("LAT", names, n);
-            int longindex      = IUFindIndex("LONG", names, n);
-            int elevationindex = IUFindIndex("ELEV", names, n);
+            int latindex       = IUFindIndex(INDI::SP::GEOGRAPHIC_COORD_LAT, names, n);
+            int longindex      = IUFindIndex(INDI::SP::GEOGRAPHIC_COORD_LONG, names, n);
+            int elevationindex = IUFindIndex(INDI::SP::GEOGRAPHIC_COORD_ELEV, names, n);
 
             if (latindex == -1 || longindex == -1 || elevationindex == -1)
             {
@@ -257,7 +257,7 @@ bool INDI::Weather::ISSnoopDevice(XMLEle *root)
 
     if (isConnected())
     {
-        if (!strcmp(propName, "GEOGRAPHIC_COORD"))
+        if (!strcmp(propName, INDI::SP::GEOGRAPHIC_COORD))
         {
             // Only accept IPS_OK state
             if (strcmp(findXMLAttValu(root, "state"), "Ok"))
@@ -269,11 +269,11 @@ bool INDI::Weather::ISSnoopDevice(XMLEle *root)
             {
                 const char *elemName = findXMLAttValu(ep, "name");
 
-                if (!strcmp(elemName, "LAT"))
+                if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_LAT))
                     latitude = atof(pcdataXMLEle(ep));
-                else if (!strcmp(elemName, "LONG"))
+                else if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_LONG))
                     longitude = atof(pcdataXMLEle(ep));
-                else if (!strcmp(elemName, "ELEV"))
+                else if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_ELEV))
                     elevation = atof(pcdataXMLEle(ep));
             }
 

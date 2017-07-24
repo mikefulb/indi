@@ -77,7 +77,7 @@ bool V4L2_Driver::initProperties()
 
     /* Port */
     IUFillText(&PortT[0], "PORT", "Port", "/dev/video0");
-    IUFillTextVector(&PortTP, PortT, NARRAY(PortT), getDeviceName(), "DEVICE_PORT", "Ports", OPTIONS_TAB, IP_RW, 0,
+    IUFillTextVector(&PortTP, PortT, NARRAY(PortT), getDeviceName(), INDI::SP::DEVICE_PORT, "Ports", OPTIONS_TAB, IP_RW, 0,
                      IPS_IDLE);
 
     /* Color space */
@@ -169,7 +169,7 @@ void V4L2_Driver::ISGetProperties(const char *dev)
     INDI::CCD::ISGetProperties(dev);
 
     defineText(&PortTP);
-    loadConfig(true, "DEVICE_PORT");
+    loadConfig(true, INDI::SP::DEVICE_PORT);
 
     if (isConnected())
     {

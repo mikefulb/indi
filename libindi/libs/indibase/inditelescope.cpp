@@ -112,10 +112,10 @@ bool INDI::Telescope::initProperties()
     IUFillText(&TimeT[1], "OFFSET", "UTC Offset", nullptr);
     IUFillTextVector(&TimeTP, TimeT, 2, getDeviceName(), "TIME_UTC", "UTC", SITE_TAB, IP_RW, 60, IPS_IDLE);
 
-    IUFillNumber(&LocationN[LOCATION_LATITUDE], "LAT", "Lat (dd:mm:ss)", "%010.6m", -90, 90, 0, 0.0);
-    IUFillNumber(&LocationN[LOCATION_LONGITUDE], "LONG", "Lon (dd:mm:ss)", "%010.6m", 0, 360, 0, 0.0);
-    IUFillNumber(&LocationN[LOCATION_ELEVATION], "ELEV", "Elevation (m)", "%g", -200, 10000, 0, 0);
-    IUFillNumberVector(&LocationNP, LocationN, 3, getDeviceName(), "GEOGRAPHIC_COORD", "Scope Location", SITE_TAB,
+    IUFillNumber(&LocationN[LOCATION_LATITUDE], INDI::SP::GEOGRAPHIC_COORD_LAT, "Lat (dd:mm:ss)", "%010.6m", -90, 90, 0, 0.0);
+    IUFillNumber(&LocationN[LOCATION_LONGITUDE], INDI::SP::GEOGRAPHIC_COORD_LONG, "Lon (dd:mm:ss)", "%010.6m", 0, 360, 0, 0.0);
+    IUFillNumber(&LocationN[LOCATION_ELEVATION], INDI::SP::GEOGRAPHIC_COORD_ELEV, "Elevation (m)", "%g", -200, 10000, 0, 0);
+    IUFillNumberVector(&LocationNP, LocationN, 3, getDeviceName(), INDI::SP::GEOGRAPHIC_COORD, "Scope Location", SITE_TAB,
                        IP_RW, 60, IPS_OK);
 
     // Pier Side
@@ -221,7 +221,7 @@ bool INDI::Telescope::initProperties()
         registerConnection(tcpConnection);
     }
 
-    IDSnoopDevice(ActiveDeviceT[0].text, "GEOGRAPHIC_COORD");
+    IDSnoopDevice(ActiveDeviceT[0].text, INDI::SP::GEOGRAPHIC_COORD);
     IDSnoopDevice(ActiveDeviceT[0].text, "TIME_UTC");
 
     IDSnoopDevice(ActiveDeviceT[1].text, "DOME_PARK");
@@ -432,7 +432,7 @@ bool INDI::Telescope::ISSnoopDevice(XMLEle *root)
 
     if (isConnected())
     {
-        if (HasLocation() && !strcmp(propName, "GEOGRAPHIC_COORD"))
+        if (HasLocation() && !strcmp(propName, INDI::SP::GEOGRAPHIC_COORD))
         {
             // Only accept IPS_OK state
             if (strcmp(findXMLAttValu(root, "state"), "Ok"))
@@ -444,11 +444,11 @@ bool INDI::Telescope::ISSnoopDevice(XMLEle *root)
             {
                 const char *elemName = findXMLAttValu(ep, "name");
 
-                if (!strcmp(elemName, "LAT"))
+                if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_LAT))
                     latitude = atof(pcdataXMLEle(ep));
-                else if (!strcmp(elemName, "LONG"))
+                else if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_LONG))
                     longitude = atof(pcdataXMLEle(ep));
-                else if (!strcmp(elemName, "ELEV"))
+                else if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_ELEV))
                     elevation = atof(pcdataXMLEle(ep));
             }
 
@@ -643,7 +643,7 @@ bool INDI::Telescope::ISNewText(const char *dev, const char *name, char *texts[]
             //  Update client display
             IDSetText(&ActiveDeviceTP, nullptr);
 
-            IDSnoopDevice(ActiveDeviceT[0].text, "GEOGRAPHIC_COORD");
+            IDSnoopDevice(ActiveDeviceT[0].text, INDI::SP::GEOGRAPHIC_COORD);
             IDSnoopDevice(ActiveDeviceT[0].text, "TIME_UTC");
 
             IDSnoopDevice(ActiveDeviceT[1].text, "DOME_PARK");
@@ -744,11 +744,11 @@ bool INDI::Telescope::ISNewNumber(const char *dev, const char *name, double valu
             return rc;
         }
 
-        if (strcmp(name, "GEOGRAPHIC_COORD") == 0)
+        if (strcmp(name, INDI::SP::GEOGRAPHIC_COORD) == 0)
         {
-            int latindex       = IUFindIndex("LAT", names, n);
-            int longindex      = IUFindIndex("LONG", names, n);
-            int elevationindex = IUFindIndex("ELEV", names, n);
+            int latindex       = IUFindIndex(INDI::SP::GEOGRAPHIC_COORD_LAT, names, n);
+            int longindex      = IUFindIndex(INDI::SP::GEOGRAPHIC_COORD_LONG, names, n);
+            int elevationindex = IUFindIndex(INDI::SP::GEOGRAPHIC_COORD_ELEV, names, n);
 
             if (latindex == -1 || longindex == -1 || elevationindex == -1)
             {

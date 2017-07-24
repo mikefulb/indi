@@ -22,6 +22,8 @@
 
 #include "indibase.h"
 
+#undef TIME_UTC
+
 namespace INDI
 {
 
@@ -63,6 +65,82 @@ public:
      * CONNECTION | SWITCH | DISCONNECT | ON | Disconnect device
      */
     static constexpr const char *CONNECTION = "CONNECTION";
+
+    /*@}*/
+
+
+    /*@{*/
+
+    /**
+     * @brief Device connection port.
+     * Name        | Type | Member | Default | Description
+     * ----------- | ---- | ------ | ------- | -----------
+     * DEVICE_PORT | TEXT | PORT   |         | Device connection port
+     */
+    static constexpr const char *DEVICE_PORT = "DEVICE_PORT";
+
+    /*@}*/
+
+    /*@{*/
+
+    /**
+     * @brief Local sidereal time HH:MM:SS.
+     * Name     | Type   | Member | Default | Description
+     * -------- | ------ | ------ | ------- | -----------
+     * TIME_LST | NUMBER | LST    |         | Local sidereal time HH:MM:SS
+     */
+    static constexpr const char *TIME_LST = "TIME_LST";
+
+    /*@}*/
+
+    /*@{*/
+
+//    /**
+//     * @brief UTC Time and offset.
+//     * Name     | Type   | Member    | Default | Description
+//     * -------- | ------ | --------- | ------- | -----------
+//     * TIME_UTC | TEXT   | UTC       |         | UTC time in ISO 8601 format
+//     * TIME_UTC | TEXT   | OFFSET    |         | UTC offset, in hours +E
+//     *
+//     * NOTE: Unfortunately TIME_UTC is defined in time.h and conflicts!
+//     */
+//    static constexpr const char *TIME_UTC = "TIME_UTC";
+
+    /*@}*/
+
+    /*@{*/
+
+    /**
+     * @brief Earth geodetic coordinate
+     * Name     | Type   | Member | Default | Description
+     * -------- | ------ | ------ | ------- | -----------
+     * GEOGRAPHIC_COORD | NUMBER | LAT    |         | Site latitude (-90 to +90), degrees +N
+     * GEOGRAPHIC_COORD | NUMBER | LONG   |         | Site longitude (0 to 360), degrees +E
+     * GEOGRAPHIC_COORD | NUMBER | ELV    |         | Site elevation, meters
+     */
+    static constexpr const char *GEOGRAPHIC_COORD = "GEOGRAPHIC_COORD";
+    static constexpr const char *GEOGRAPHIC_COORD_LAT = "LAT";
+    static constexpr const char *GEOGRAPHIC_COORD_LONG = "LONG";
+    static constexpr const char *GEOGRAPHIC_COORD_ELEV = "ELEV";
+
+
+    /*@}*/
+
+    /*@{*/
+
+    /**
+     * @brief Weather conditions
+     * Name     | Type   | Member | Default | Description
+     * -------- | ------ | ------ | ------- | -----------
+     * ATMOSPHERE | NUMBER | TEMPERATURE  |         | Kelvin
+     * ATMOSPHERE | NUMBER | PRESSURE     |         | Pa
+     * ATMOSPHERE | NUMBER | HUMIDITY     |         | Percentage %
+     */
+    static constexpr const char *ATMOSPHERE = "ATMOSPHERE";
+    static constexpr const char *ATMOSPHERE_TEMPERATURE = "TEMPERATURE";
+    static constexpr const char *ATMOSPHERE_PRESSURE = "PRESSURE";
+    static constexpr const char *ATMOSPHERE_HUMIDITY = "HUMIDITY";
+
 
     /*@}*/
 

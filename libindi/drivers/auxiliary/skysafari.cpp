@@ -718,8 +718,8 @@ void SkySafari::sendGeographicCoords()
     INumberVectorProperty *geographicCoords = skySafariClient->getGeographiCoords();
     if (geographicCoords && haveLatitude && haveLongitude)
     {
-        INumber *latitude  = IUFindNumber(geographicCoords, "LAT");
-        INumber *longitude = IUFindNumber(geographicCoords, "LONG");
+        INumber *latitude  = IUFindNumber(geographicCoords, INDI::SP::GEOGRAPHIC_COORD_LAT);
+        INumber *longitude = IUFindNumber(geographicCoords, INDI::SP::GEOGRAPHIC_COORD_LONG);
         if (latitude && longitude)
         {
             latitude->value  = siteLatitude;

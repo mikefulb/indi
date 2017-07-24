@@ -176,7 +176,7 @@ bool INDI::Dome::initProperties()
     controller->initProperties();
 
     IDSnoopDevice(ActiveDeviceT[0].text, "EQUATORIAL_EOD_COORD");
-    IDSnoopDevice(ActiveDeviceT[0].text, "GEOGRAPHIC_COORD");
+    IDSnoopDevice(ActiveDeviceT[0].text, INDI::SP::GEOGRAPHIC_COORD);
     IDSnoopDevice(ActiveDeviceT[0].text, "TELESCOPE_PARK");
 
     IDSnoopDevice(ActiveDeviceT[1].text, "WEATHER_STATUS");
@@ -614,7 +614,7 @@ bool INDI::Dome::ISNewText(const char *dev, const char *name, char *texts[], cha
 
             IDSnoopDevice(ActiveDeviceT[0].text, "EQUATORIAL_EOD_COORD");
             IDSnoopDevice(ActiveDeviceT[0].text, "TARGET_EOD_COORD");
-            IDSnoopDevice(ActiveDeviceT[0].text, "GEOGRAPHIC_COORD");
+            IDSnoopDevice(ActiveDeviceT[0].text, INDI::SP::GEOGRAPHIC_COORD);
             IDSnoopDevice(ActiveDeviceT[0].text, "TELESCOPE_PARK");
             IDSnoopDevice(ActiveDeviceT[1].text, "WEATHER_STATUS");
 
@@ -712,12 +712,12 @@ bool INDI::Dome::ISSnoopDevice(XMLEle *root)
     }
 
     // Check Geographic coords
-    if (!strcmp("GEOGRAPHIC_COORD", propName))
+    if (!strcmp(INDI::SP::GEOGRAPHIC_COORD, propName))
     {
         for (ep = nextXMLEle(root, 1); ep != nullptr; ep = nextXMLEle(root, 0))
         {
             const char *elemName = findXMLAttValu(ep, "name");
-            if (!strcmp(elemName, "LONG"))
+            if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_LONG))
             {
                 double indiLong;
                 f_scansexa(pcdataXMLEle(ep), &indiLong);
@@ -726,7 +726,7 @@ bool INDI::Dome::ISSnoopDevice(XMLEle *root)
                 observer.lng = indiLong;
                 HaveLatLong  = true;
             }
-            else if (!strcmp(elemName, "LAT"))
+            else if (!strcmp(elemName, INDI::SP::GEOGRAPHIC_COORD_LAT))
                 f_scansexa(pcdataXMLEle(ep), &(observer.lat));
         }
 
