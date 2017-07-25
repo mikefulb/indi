@@ -129,6 +129,12 @@ bool INDI::Telescope::initProperties()
     IUFillSwitchVector(&PECStateSP, PECStateS, 2, getDeviceName(), "PEC", "PEC Playback", MOTION_TAB, IP_RW, ISR_1OFMANY, 0,
                        IPS_IDLE);
 
+    // Tracking State
+    IUFillSwitch(&TrackingS[TRACKING_DISABLED], "TRACKING OFF", "TRACKING OFF", ISS_OFF);
+    IUFillSwitch(&TrackingS[TRACKING_ENABLED], "TRACKING ON", "TRACKING ON", ISS_ON);
+    IUFillSwitchVector(&TrackingSP, TrackingS, 2, getDeviceName(), "Tracking", "Tracking Control", MOTION_TAB, IP_RW, ISR_1OFMANY, 0,
+                       IPS_IDLE);
+
     IUFillSwitch(&CoordS[0], "TRACK", "Track", ISS_ON);
     IUFillSwitch(&CoordS[1], "SLEW", "Slew", ISS_OFF);
     IUFillSwitch(&CoordS[2], "SYNC", "Sync", ISS_OFF);
@@ -291,6 +297,9 @@ void INDI::Telescope::ISGetProperties(const char *dev)
         if (HasPECState())
             defineSwitch(&PECStateSP);
 
+        if (HasTrackControl())
+            defineSwitch(&TrackingSP);
+
         defineSwitch(&ScopeConfigsSP);
     }
 
@@ -354,6 +363,9 @@ bool INDI::Telescope::updateProperties()
         if (HasPECState())
             defineSwitch(&PECStateSP);
 
+        if (HasTrackControl())
+            defineSwitch(&TrackingSP);
+
         defineText(&ScopeConfigNameTP);
         defineSwitch(&ScopeConfigsSP);
     }
@@ -394,6 +406,9 @@ bool INDI::Telescope::updateProperties()
 
         if (HasPECState())
             deleteProperty(PECStateSP.name);
+
+        if (HasTrackControl())
+            deleteProperty(TrackingSP.name);
 
         deleteProperty(ScopeConfigNameTP.name);
         deleteProperty(ScopeConfigsSP.name);
@@ -1072,6 +1087,47 @@ bool INDI::Telescope::ISNewSwitch(const char *dev, const char *name, ISState *st
             return true;
         }
 
+        if (!strcmp(name, TrackingSP.name))
+        {
+            IUUpdateSwitch(&TrackingSP, states, names, n);
+            ISwitch *sp = IUFindOnSwitch(&TrackingSP);
+            if (!sp)
+                return false;
+
+            IUResetSwitch(&TrackingSP);
+
+            bool rc = false;
+
+            // only makes sense if idle or tracking and not other scope states
+            if ((TrackState == SCOPE_IDLE || TrackState == SCOPE_TRACKING))
+            {
+
+                if (!strcmp(sp->name, "TRACKING ON"))
+                {
+                    rc = SetTrackingEnabled(true);
+
+                    if (rc)
+                        TrackState = SCOPE_TRACKING;
+                    else
+                        DEBUG(INDI::Logger::DBG_SESSION, "Could not enable tracking");
+                }
+                else if (!strcmp(sp->name, "TRACKING OFF"))
+                {
+                    rc = SetTrackingEnabled(false);
+
+                    if (rc)
+                        TrackState = SCOPE_IDLE;
+                    else
+                        DEBUG(INDI::Logger::DBG_SESSION, "Could not disable tracking");
+                }
+            }
+
+            TrackingSP.s = rc ? IPS_OK : IPS_ALERT;
+            IDSetSwitch(&TrackingSP, nullptr);
+
+            return true;
+        }
+
         if (!strcmp(name, ParkOptionSP.name))
         {
             IUUpdateSwitch(&ParkOptionSP, states, names, n);
@@ -1219,6 +1275,15 @@ void INDI::Telescope::TimerHit()
         SetTimer(updatePeriodMS);
     }
 }
+
+bool INDI::Telescope::SetTrackingEnabled(bool enable)
+{
+    INDI_UNUSED(enable);
+
+    DEBUG(INDI::Logger::DBG_WARNING, "SetTrackingEnabled is not supported.");
+    return false;
+}
+
 
 bool INDI::Telescope::Goto(double ra, double dec)
 {

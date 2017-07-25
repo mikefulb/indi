@@ -506,6 +506,21 @@ int selectAPTrackingMode(int fd, int trackMode)
     return 0;
 }
 
+
+int setAPTrackingDisabled(int fd)
+{
+    int error_type;
+    int nbytes_write = 0;
+
+    DEBUGDEVICE(lx200ap_name, INDI::Logger::DBG_DEBUG, "setAPTrackingDisabled: Setting tracking disabled.");
+    DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "CMD <%s>", "#:RT9#");
+
+    if ((error_type = tty_write_string(fd, "#:RT9#", &nbytes_write)) != TTY_OK)
+        return error_type;
+
+    return 0;
+}
+
 int swapAPButtons(int fd, int currentSwap)
 {
     int error_type;

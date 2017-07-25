@@ -44,7 +44,7 @@ LX200AstroPhysics::LX200AstroPhysics() : LX200Generic()
 
     setLX200Capability(LX200_HAS_PULSE_GUIDING | LX200_HAS_TRACK_MODE);
 
-    SetTelescopeCapability(GetTelescopeCapability() | TELESCOPE_HAS_PIER_SIDE | TELESCOPE_HAS_PEC, 4);
+    SetTelescopeCapability(GetTelescopeCapability() | TELESCOPE_HAS_PIER_SIDE | TELESCOPE_HAS_PEC | TELESCOPE_HAS_TRACKCONTROL, 4);
 
     //ctor
     currentRA  = get_local_sideral_time(0);
@@ -813,6 +813,34 @@ void LX200AstroPhysics::debugTriggered(bool enable)
     INDI_UNUSED(enable);
     LX200Generic::debugTriggered(enable);
     set_lx200ap_name(getDeviceName(), DBG_SCOPE);
+}
+
+
+bool LX200AstroPhysics::SetTrackingEnabled(bool enable)
+{
+    int err = 0;
+
+    if (enable)
+    {
+        trackingMode = IUFindOnSwitchIndex(&TrackModeSP);
+
+        if (isSimulation() == false && (err = selectAPTrackingMode(PortFD, trackingMode) < 0))
+        {
+            DEBUGF(INDI::Logger::DBG_ERROR, "Error setting tracking mode (%d).", err);
+            return false;
+        }
+    }
+    else
+    {
+        if (isSimulation() == false && (err = setAPTrackingDisabled(PortFD) < 0))
+        {
+            DEBUGF(INDI::Logger::DBG_ERROR, "Error setting tracking mode (%d).", err);
+            return false;
+        }
+
+    }
+
+    return true;
 }
 
 

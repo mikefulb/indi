@@ -103,12 +103,16 @@ class INDI::Telescope : public INDI::DefaultDevice
         PIER_WEST    = 0,
         PIER_EAST    = 1
     };
-
     enum TelescopePECState
     {
         PEC_UNKNOWN = -1,
         PEC_OFF     = 0,
         PEC_ON      = 1
+    };
+    enum TelescopeTrackingState
+    {
+        TRACKING_DISABLED = 0,
+        TRACKING_ENABLED  = 1
     };
 
     /**
@@ -128,14 +132,15 @@ class INDI::Telescope : public INDI::DefaultDevice
      */
     enum
     {
-        TELESCOPE_CAN_GOTO      = 1 << 0, /** Can the telescope go to to specific coordinates? */
-        TELESCOPE_CAN_SYNC      = 1 << 1, /** Can the telescope sync to specific coordinates? */
-        TELESCOPE_CAN_PARK      = 1 << 2, /** Can the telescope park? */
-        TELESCOPE_CAN_ABORT     = 1 << 3, /** Can the telescope abort motion? */
-        TELESCOPE_HAS_TIME      = 1 << 4, /** Does the telescope have configurable date and time settings? */
-        TELESCOPE_HAS_LOCATION  = 1 << 5, /** Does the telescope have configuration location settings? */
-        TELESCOPE_HAS_PIER_SIDE = 1 << 6, /** Does the telescope have pier side property? */
-        TELESCOPE_HAS_PEC       = 1 << 7  /** Does the telescope have PEC playback? */
+        TELESCOPE_CAN_GOTO         = 1 << 0, /** Can the telescope go to to specific coordinates? */
+        TELESCOPE_CAN_SYNC         = 1 << 1, /** Can the telescope sync to specific coordinates? */
+        TELESCOPE_CAN_PARK         = 1 << 2, /** Can the telescope park? */
+        TELESCOPE_CAN_ABORT        = 1 << 3, /** Can the telescope abort motion? */
+        TELESCOPE_HAS_TIME         = 1 << 4, /** Does the telescope have configurable date and time settings? */
+        TELESCOPE_HAS_LOCATION     = 1 << 5, /** Does the telescope have configuration location settings? */
+        TELESCOPE_HAS_PIER_SIDE    = 1 << 6, /** Does the telescope have pier side property? */
+        TELESCOPE_HAS_PEC          = 1 << 7, /** Does the telescope have PEC playback? */
+        TELESCOPE_HAS_TRACKCONTROL = 1 << 8  /** Does the telescope have the ability to turn RA tracking ON/OFF? */
     } TelescopeCapability;
 
     Telescope();
@@ -201,6 +206,11 @@ class INDI::Telescope : public INDI::DefaultDevice
      * @return True if telescope supports PEC playback property
      */
     bool HasPECState() { return capability & TELESCOPE_HAS_PEC; }
+
+    /**
+     * @return True if telescope supports turning tracking ON/OFF
+     */
+    bool HasTrackControl() { return capability & TELESCOPE_HAS_TRACKCONTROL; }
 
     /** \brief Called to initialize basic properties required all the time */
     virtual bool initProperties();
@@ -405,6 +415,14 @@ class INDI::Telescope : public INDI::DefaultDevice
     virtual bool Abort();
 
     /**
+     * \brief Enable telescope tracking
+     * \return True if successful, false otherwise
+     * \note If not implemented by the child class, this function by default returns false with a
+     * warning message.
+     */
+    virtual bool SetTrackingEnabled(bool enable);
+
+    /**
      * \brief Update telescope time, date, and UTC offset.
      * \param utc UTC time.
      * \param utc_offset UTC offset in hours.
@@ -591,9 +609,12 @@ class INDI::Telescope : public INDI::DefaultDevice
     ISwitch PECStateS[2];
     ISwitchVectorProperty PECStateSP;
 
-
     // PEC State
     TelescopePECState lastPECState, currentPECState;
+
+    // Tracking enable
+    ISwitch TrackingS[2];
+    ISwitchVectorProperty TrackingSP;
 
 
     uint32_t capability;
