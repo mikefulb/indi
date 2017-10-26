@@ -51,6 +51,7 @@ int setAPObjectRA(int fd, double ra);
 int setAPObjectDEC(int fd, double dec);
 int setAPSiteLongitude(int fd, double Long);
 int setAPSiteLatitude(int fd, double Lat);
+int APSendPulseCmd(int fd, int direction, int duration_msec);
 
 #ifdef __cplusplus
 }

@@ -142,7 +142,8 @@ void LX200AstroPhysics::ISGetProperties(const char *dev)
 
 bool LX200AstroPhysics::updateProperties()
 {
-    INDI::Telescope::updateProperties();
+  //INDI::Telescope::updateProperties();  // OLD CODE PULSE GUIDE NOT ALWAYS OFFERED
+  LX200Generic::updateProperties();     // commit 3d652b1 to fix
 
     if (isConnected())
     {
@@ -649,6 +650,11 @@ bool LX200AstroPhysics::Goto(double r, double d)
 
     IDMessage(getDeviceName(), "Slewing to RA: %s - DEC: %s", RAStr, DecStr);
     return true;
+}
+
+int LX200AstroPhysics::SendPulseCmd(int direction, int duration_msec)
+{
+  return APSendPulseCmd(PortFD, direction, duration_msec);
 }
 
 bool LX200AstroPhysics::Handshake()
