@@ -79,7 +79,16 @@
 
 #define MAXRBUF 2048
 
-int tty_debug = 0;
+
+// define for PMC8 because it wants DTR unasserted
+#define PMC8_DTR_HACK
+
+#ifdef PMC8_DTR_HACK
+/* HACK (MSF) Needed to clear DTR for PMC8 */
+#include <sys/ioctl.h>
+#endif
+
+int tty_debug = 1;
 
 #if defined(HAVE_LIBNOVA)
 int extractISOTime(const char *timestr, struct ln_date *iso_date)
@@ -1018,6 +1027,22 @@ int tty_connect(const char *device, int bit_rate, int word_size, int parity, int
         tty_disconnect(t_fd);
         return TTY_PORT_FAILURE;
     }
+
+#ifdef PMC8_DTR_HACK
+    // HACK (MSF)
+    // For PMC8 we want to lower DTR but this is likely to cause a RESET to the PMC8
+    // so we wait a few seconds and then flush buffers to get rid of initial
+    // boot messages from PCM8 - THIS IS NOT A PERMANENT SOLUTION
+    int DTR_flag=TIOCM_DTR;
+    ioctl(t_fd,TIOCMBIC, &DTR_flag);
+
+    // wait for reset and then clear buffer
+    sleep(10);
+    tcflush(t_fd, TCIOFLUSH);
+#endif
+
+
+
 
     *fd = t_fd;
     /* return success */
