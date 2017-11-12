@@ -88,7 +88,7 @@
 #include <sys/ioctl.h>
 #endif
 
-int tty_debug = 1;
+int tty_debug = 0;
 
 #if defined(HAVE_LIBNOVA)
 int extractISOTime(const char *timestr, struct ln_date *iso_date)
@@ -1037,7 +1037,7 @@ int tty_connect(const char *device, int bit_rate, int word_size, int parity, int
     ioctl(t_fd,TIOCMBIC, &DTR_flag);
 
     // wait for reset and then clear buffer
-    sleep(10);
+    sleep(20);
     tcflush(t_fd, TCIOFLUSH);
 #endif
 
