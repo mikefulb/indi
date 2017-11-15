@@ -488,7 +488,7 @@ bool get_pmc8_direction_axis(int fd, PMC8_AXIS axis, int &dir)
 
     dir = (int)strtol(num_str, NULL, 0);
 
-    DEBUGFDEVICE(pmc8_device, INDI::Logger::DBG_DEBUG, "get dir num_str = %s atoi() returns %d", num_str, dir);
+#    DEBUGFDEVICE(pmc8_device, INDI::Logger::DBG_DEBUG, "get dir num_str = %s atoi() returns %d", num_str, dir);
 
     return true;
 }
