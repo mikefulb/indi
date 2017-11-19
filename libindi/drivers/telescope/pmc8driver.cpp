@@ -1347,7 +1347,9 @@ bool start_pmc8_guide(int fd, PMC8_DIRECTION gdir, int ms)
         // not sure if best to flip dir or rate first!
 //        if (new_ra_rate != cur_ra_rate)
 //            set_pmc8_axis_motor_rate(fd, PMC8_AXIS_RA, cur_ra_rate, true);
-        // FIXME - (MSF) for now restore sidereal tracking
+        // FIXME - (MSF) Need FAST version of set_pmc8_track_mode!!
+        //               Right now all RA pulses are about 15ms too long on my i7 laptop
+        //               due to set_pmc8_track_mode() waiting on responses from PMC-Eight
         if (new_ra_rate != cur_ra_rate)
             if (!set_pmc8_track_mode(fd, PMC8_TRACK_SIDEREAL))
                 DEBUGDEVICE(pmc8_device, INDI::Logger::DBG_DEBUG, "pmc8_start_guide(): error settings cur_ra_ra");
