@@ -739,6 +739,76 @@ int setAPDETrackRate(int fd, double rate)
     return -1;
 }
 
+int setAPMeridianDelay(int fd, double mdelay)
+{
+    char cmd[32];
+    char hourstr[16];
+    int nbytes_write = 0;
+
+    DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "<%s>", __FUNCTION__);
+
+    if (mdelay < 0)
+    {
+        DEBUGFDEVICE(lx200ap_name, INDI::Logger::DBG_ERROR, "Meridian delay < 0 not supported! mdelay=%f", mdelay);
+        return -1;
+    }
+
+
+    // convert from decimal hours to format for command
+    if (fs_sexa(hourstr, mdelay, 2, 3600) < 0)
+    {
+        DEBUGFDEVICE(lx200ap_name, INDI::Logger::DBG_ERROR, "Unable to format meridian delay %f to time format!", mdelay);
+        return -1;
+    }
+
+    DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "Meridian Delay %f -> %s", mdelay, hourstr);
+
+    sprintf(cmd, ":SM%s#", hourstr);
+
+    DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "CMD <%s>", cmd);
+
+    tty_write_string(fd, cmd, &nbytes_write);
+
+    tcflush(fd, TCIFLUSH);
+
+    return 0;
+}
+
+int getAPMeridianDelay(int fd, double *mdelay)
+{
+    int error_type;
+    int nbytes_write = 0;
+    int nbytes_read  = 0;
+    char temp_string[16];
+
+    DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "<%s>", __FUNCTION__);
+
+    DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "CMD <%s>", "#:GM#");
+
+    if ((error_type = tty_write_string(fd, "#:GM#", &nbytes_write)) != TTY_OK)
+        return error_type;
+
+    if ((error_type = tty_read_section(fd, temp_string, '#', LX200_TIMEOUT, &nbytes_read)) != TTY_OK)
+    {
+        DEBUGFDEVICE(lx200ap_name, INDI::Logger::DBG_ERROR, "getAPMeridianDelay: error %d, %d", error_type,
+                     nbytes_read);
+        return error_type;
+    }
+
+    tcflush(fd, TCIFLUSH);
+
+    DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "RES <%s>", temp_string);
+
+    if (f_scansexa(temp_string, mdelay))
+    {
+        DEBUGFDEVICE(lx200ap_name, INDI::Logger::DBG_ERROR, "getAPMeridianDelay: unable to process %s", temp_string);
+        return -1;
+    }
+
+    return 0;
+}
+
+
 int APSendPulseCmd(int fd, int direction, int duration_msec)
 {
     DEBUGFDEVICE(lx200ap_name, AP_DBG_SCOPE, "<%s>", __FUNCTION__);

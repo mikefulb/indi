@@ -60,6 +60,8 @@ int setAPSiteLongitude(int fd, double Long);
 int setAPSiteLatitude(int fd, double Lat);
 int setAPRATrackRate(int fd, double rate);
 int setAPDETrackRate(int fd, double rate);
+int setAPMeridianDelay(int fd, double mdelay);
+int getAPMeridianDelay(int fd, double *mdelay);
 int APSendPulseCmd(int fd, int direction, int duration_msec);
 
 #ifdef __cplusplus

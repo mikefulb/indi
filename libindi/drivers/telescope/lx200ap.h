@@ -111,6 +111,9 @@ class LX200AstroPhysics : public LX200Generic
     INumber SlewAccuracyN[2];
     INumberVectorProperty SlewAccuracyNP;
 
+    INumberVectorProperty MeridianDelayNP;
+    INumber MeridianDelayN[1];
+
   private:
     bool isMountInit();
     bool setBasicDataPart0();

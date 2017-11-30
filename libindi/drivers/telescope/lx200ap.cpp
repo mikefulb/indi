@@ -119,6 +119,10 @@ bool LX200AstroPhysics::initProperties()
     IUFillNumberVector(&SlewAccuracyNP, SlewAccuracyN, 2, getDeviceName(), "Slew Accuracy", "", MOUNT_TAB, IP_RW, 0,
                        IPS_IDLE);
 
+    // meridian delay (experimental!)
+    IUFillNumber(&MeridianDelayN[0], "MeridianDelay", "MERIDIAN_DELAY (experimental!)", "%4.2f", 0.0, 3.0, 0.25, 0.0);
+    IUFillNumberVector(&MeridianDelayNP, MeridianDelayN, 1, getDeviceName(), "MERIDIAN_DELAY (experimental!)", "", MOUNT_TAB, IP_RW, 60, IPS_OK);
+
     SetParkDataType(PARK_AZ_ALT);
 
     return true;
@@ -163,6 +167,7 @@ bool LX200AstroPhysics::updateProperties()
         defineSwitch(&SyncCMRSP);
         defineSwitch(&APGuideSpeedSP);
         defineNumber(&SlewAccuracyNP);
+        defineNumber(&MeridianDelayNP);
 
         DEBUG(INDI::Logger::DBG_SESSION, "Please initialize the mount before issuing any command.");
     }
@@ -176,6 +181,8 @@ bool LX200AstroPhysics::updateProperties()
         deleteProperty(SyncCMRSP.name);
         defineSwitch(&APGuideSpeedSP);
         deleteProperty(SlewAccuracyNP.name);
+        deleteProperty(MeridianDelayNP.name);
+
     }
 
     return true;
@@ -432,6 +439,28 @@ bool LX200AstroPhysics::ISNewNumber(const char *dev, const char *name, double va
         IDSetNumber(&SlewAccuracyNP, nullptr);
         return true;
     }
+    else if (!strcmp(name, MeridianDelayNP.name))
+    {
+        if (IUUpdateNumber(&MeridianDelayNP, values, names, n) < 0)
+            return false;
+
+        float mdelay;
+        int err;
+
+        mdelay = MeridianDelayN[0].value;
+
+        DEBUGF(INDI::Logger::DBG_SESSION, "lx200ap: meridian delay request = %f", mdelay);
+
+        if (!isSimulation() && (err = setAPMeridianDelay(PortFD, mdelay) < 0))
+        {
+            DEBUGF(INDI::Logger::DBG_ERROR, "lx200ap: Error setting meridian delay (%d).", err);
+            return false;
+        }
+
+        MeridianDelayNP.s = IPS_OK;
+        IDSetNumber(&MeridianDelayNP, nullptr);
+        return true;
+    }
 
     return LX200Generic::ISNewNumber(dev, name, values, names, n);
 }
@@ -599,6 +628,13 @@ bool LX200AstroPhysics::setBasicDataPart1()
     if (!isSimulation() && (err = setAPMotionStop(PortFD)) < 0)
     {
         DEBUGF(INDI::Logger::DBG_ERROR, "Stop motion (:Q#) failed, check the mount (%d): %s", strerror(err));
+        return false;
+    }
+
+    // reset meridian delay to 0
+    if (!isSimulation() && (err = setAPMeridianDelay(PortFD, 0)) < 0)
+    {
+        DEBUGF(INDI::Logger::DBG_ERROR, "Setting Meridian Delay to 0 failed - check the mount (%d): %s", err, strerror(err));
         return false;
     }
 
