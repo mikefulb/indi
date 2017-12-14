@@ -502,12 +502,15 @@ bool LX200AstroPhysics::ReadScopeStatus()
     return true;
 }
 
+// experimental function needs testing!!!
 bool LX200AstroPhysics::IsMountInitialized(bool *initialized)
 {
     double ra, dec;
     bool raZE, deZE, de90;
 
     double epscheck = 1e-5; // two doubles this close are considered equal
+
+    DEBUG(INDI::Logger::DBG_DEBUG, "EXPERIMENTAL: LX200AstroPhysics::IsMountInitialized()");
 
     if (getLX200RA(PortFD, &ra) || getLX200DEC(PortFD, &dec))
         return false;
@@ -536,10 +539,12 @@ bool LX200AstroPhysics::IsMountInitialized(bool *initialized)
     return true;
 }
 
+// experimental function needs testing!!!
 bool LX200AstroPhysics::IsMountParked(bool *isParked)
 {
     double ra1, ra2;
 
+    DEBUG(INDI::Logger::DBG_DEBUG, "EXPERIMENTAL: LX200AstroPhysics::IsMountParked()");
 
     // check for newer
     if ((firmwareVersion != MCV_UNKNOWN) && (firmwareVersion >= MCV_S))

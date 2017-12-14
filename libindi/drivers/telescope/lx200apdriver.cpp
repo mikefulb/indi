@@ -771,6 +771,7 @@ int APSendPulseCmd(int fd, int direction, int duration_msec)
     return 0;
 }
 
+// experimental function!!!
 int check_lx200ap_status(int fd, char *parkStatus)
 {
     int i = 0;
@@ -779,7 +780,7 @@ int check_lx200ap_status(int fd, char *parkStatus)
     int nbytes_write = 0;
     int nbytes_read  = 0;
 
-    DEBUGDEVICE(lx200ap_name, INDI::Logger::DBG_DEBUG, "check status...");
+    DEBUGDEVICE(lx200ap_name, INDI::Logger::DBG_DEBUG, "EXPERIMENTAL: check status...");
 
     if (fd <= 0)
     {
