@@ -546,20 +546,13 @@ bool LX200AstroPhysics::IsMountParked(bool *isParked)
 
     DEBUG(INDI::Logger::DBG_DEBUG, "EXPERIMENTAL: LX200AstroPhysics::IsMountParked()");
 
-    // check for newer
-    if ((firmwareVersion != MCV_UNKNOWN) && (firmwareVersion >= MCV_S))
+    // try one method
+    if (getMountStatus(isParked))
     {
-        char parkStatus;
-
-        if (check_lx200ap_status(PortFD, &parkStatus) == 0)
-        {
-            DEBUGF(INDI::Logger::DBG_SESSION, "parkStatus: %c", parkStatus);
-
-            *isParked = (parkStatus == 'P');
-            return true;
-        }
+        return true;
     }
 
+    // fallback for older controllers
     if (getLX200RA(PortFD, &ra1))
         return false;
 
@@ -579,6 +572,25 @@ bool LX200AstroPhysics::IsMountParked(bool *isParked)
     // can't determine
     return false;
 
+}
+
+bool LX200AstroPhysics::getMountStatus(bool *isParked)
+{
+    // check for newer
+    if ((firmwareVersion != MCV_UNKNOWN) && (firmwareVersion >= MCV_T))
+    {
+        char parkStatus;
+
+        if (check_lx200ap_status(PortFD, &parkStatus) == 0)
+        {
+            DEBUGF(INDI::Logger::DBG_SESSION, "parkStatus: %c", parkStatus);
+
+            *isParked = (parkStatus == 'P');
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool LX200AstroPhysics::Goto(double r, double d)
