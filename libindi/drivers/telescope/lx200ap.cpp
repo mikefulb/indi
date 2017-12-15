@@ -176,14 +176,14 @@ bool LX200AstroPhysics::updateProperties()
     return true;
 }
 
-bool LX200AstroPhysics::initMount()
+bool LX200AstroPhysics::getFirmwareVersion()
 {
-    // Make sure that the mount is setup according to the properties
-    int err=0;
-
-    // need version string early
-
+    bool success;
+    char rev[8];
     char versionString[128];
+
+    success = false;
+
     if (isSimulation())
         strncpy(versionString, "VCP4-P01-01", 128);
     else
@@ -193,48 +193,22 @@ bool LX200AstroPhysics::initMount()
     IUSaveText(&VersionT[0], versionString);
     IDSetText(&VersionInfo, nullptr);
 
-    // Check controller version - form is <firmware rev letter>CP<servoType int>-<version string>
-    // example "VCP4-P01-01"
-    if (strstr(versionString, "CP"))
+    // Check controller version
+    // example "VCP4-P01-01" for CP4 or newer
+    //         single or double letter like "T" or "V1" for CP3 and older
+
+    // CP4
+    if (strstr(versionString, "VCP4"))
     {
-        int type=-1;
-        if (sscanf(versionString, "VCP%d%*s", &type) == 1)
-        {
-            servoType = static_cast<ServoVersion>(type);
-            DEBUGF(INDI::Logger::DBG_SESSION, "Servo Box Controller: GTOCP%d.", servoType);
-            DEBUGF(INDI::Logger::DBG_SESSION, "Firmware Version: %s", versionString+5);
-        }
-        char rev;
-        if (sscanf(versionString, "%cCP%*s", &rev) == 1)
-        {
-            DEBUGF(INDI::Logger::DBG_SESSION, "Rev char = %c", rev);
-
-            // valid from 'F' to 'J', 'K' doesn't exist, then 'L' through 'V'
-            if (rev == 'K')
-            {
-                DEBUG(INDI::Logger::DBG_DEBUG, "detected unallowed K!'");
-                firmwareVersion = MCV_UNKNOWN;
-            }
-            else
-            {
-                int typeIndex = rev - 'E';
-                DEBUGF(INDI::Logger::DBG_DEBUG, "Firmware version index: %d", typeIndex);
-
-                if (typeIndex >= 0)
-                {
-                    firmwareVersion = static_cast<ControllerVersion>(typeIndex);
-                }
-
-                if (firmwareVersion == MCV_V)
-                    DEBUG(INDI::Logger::DBG_DEBUG, "Firmware version is 'V'");
-
-            }
-        }
-
+        firmwareVersion = MCV_V;
+        servoType = GTOCP4;
+        strcpy(rev, "V");
+        success = true;
     }
-    // Check earliar versions
-    else if (strlen(versionString) == 1)
+    else if (strlen(versionString) == 1 || strlen(versionString) == 2)
     {
+        // Check earlier versions
+        // FIXME could probably use better range checking in case we get a letter like 'Z' that doesn't map to anything!
         int typeIndex = VersionT[0].text[0] - 'E';
         if (typeIndex >= 0)
         {
@@ -245,10 +219,25 @@ bool LX200AstroPhysics::initMount()
             else
                 servoType = GTOCP3;
 
-            DEBUGF(INDI::Logger::DBG_SESSION, "Servo Box Controller: GTOCP%d.", servoType);
-            DEBUGF(INDI::Logger::DBG_SESSION, "Firmware Version: %c", VersionT[0].text[0]);
+            strcpy(rev, versionString);
+
+            success = true;
         }
     }
+
+    if (success)
+    {
+        DEBUGF(INDI::Logger::DBG_SESSION, "Servo Box Controller: GTOCP%d.", servoType);
+        DEBUGF(INDI::Logger::DBG_SESSION, "Firmware Version: '%s' - %s", rev, versionString+5);
+    }
+
+    return success;
+}
+
+bool LX200AstroPhysics::initMount()
+{
+    // Make sure that the mount is setup according to the properties
+    int err=0;
 
     if (!IsMountInitialized(&mountInitialized))
     {
@@ -697,6 +686,9 @@ bool LX200AstroPhysics::Handshake()
             return false;
         }
     }
+
+    // get firmware version
+    getFirmwareVersion();
 
     // Detect and set fomat. It should be LONG.
     return (checkLX200Format(PortFD) == 0);

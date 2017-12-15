@@ -108,6 +108,7 @@ class LX200AstroPhysics : public LX200Generic
     bool IsMountInitialized(bool *initialized);
     bool IsMountParked(bool *isParked);
     bool getMountStatus(bool *isParked);
+    bool getFirmwareVersion(void);
 
     bool timeUpdated=false, locationUpdated=false;
     ControllerVersion firmwareVersion = MCV_UNKNOWN;
